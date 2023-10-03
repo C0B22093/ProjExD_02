@@ -20,6 +20,7 @@ def main():
     bomb_domain = kk_img.get_rect() # surfaceからrect抽出
     x, y = random.randint(0, WIDTH), random.randint(0, HEIGHT)
     bomb_domain.center = (x, y) # rectにランダムな座標を設定する。
+    vx, vy = +5, +5 # 爆弾の速度
     
     
     clock = pg.time.Clock()
@@ -34,6 +35,7 @@ def main():
         
         # screen.blit(circle_bomb, [100, 100])
         
+        bomb_domain.move_ip(vx, vy) # 爆弾の移動
         screen.blit(circle_bomb, bomb_domain) # rectを使って試しにblit
         
         pg.display.update()
