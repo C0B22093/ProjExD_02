@@ -74,6 +74,7 @@ def main():
     
     clock = pg.time.Clock()
     tmr = 0
+    accerator = 1.001 # 加速度
     while True:
         for event in pg.event.get():
             if event.type == pg.QUIT: 
@@ -81,6 +82,14 @@ def main():
             
             
         if kk_domain.colliderect(bomb_domain):
+            # screen.blit(pg.transform.rotozoom(kk_img, 0, 10.0), [800, 450])
+            # pg.display.update()
+            # count = tmr
+            # while True:
+            #     if count - tmr > 3:
+            #         break
+            #     tmr += 1
+            #     clock.tick(100)
             print("ゲームオーバー")
             return
     
@@ -108,7 +117,8 @@ def main():
         screen.blit(kk_img, kk_domain)
         
         """"ばくだん"""
-        bomb_domain.move_ip(vx*accs[min(tmr//500, 9)], vy*accs[min(tmr//500, 9)]) # 爆弾の移動.時間ともに加速
+        bomb_domain.move_ip(vx*accerator, vy*accerator) # 加速させている
+        # bomb_domain.move_ip(vx*accs[min(tmr//500, 9)], vy*accs[min(tmr//500, 9)]) # 爆弾の移動.時間ともに加速
         
         # はみだしを判定する.はみ出したら方向転換
         yoko, tate = check_bound(bomb_domain)
