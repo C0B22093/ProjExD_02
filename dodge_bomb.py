@@ -12,6 +12,22 @@ move_key_dic = {
                 pg.K_RIGHT: (+5, 0),
 }
 
+def kk_direction():
+    kk_img = pg.image.load("ex02/fig/3.png")
+    kk_img = pg.transform.rotozoom(kk_img, 0, 2.0)
+    kk_trans_img = pg.transform.flip(kk_img, True, False)
+    return {
+        (0, 0): kk_img,
+        (0, -5): pg.transform.rotozoom(kk_trans_img, 90, 1.0),
+        (-5, 0): kk_img,
+        (+5, 0): kk_trans_img,
+        (+5, +5): pg.transform.rotozoom(kk_trans_img, -45, 1.0),
+        (0, +5): pg.transform.rotozoom(kk_trans_img, -90, 1.0),
+        (-5, +5): pg.transform.rotozoom(kk_img, 45, 1.0),
+        (-5, -5): pg.transform.rotozoom(kk_img, 45, 1.0),
+        (+5, -5): pg.transform.rotozoom(kk_trans_img, 45, 1.0)
+    }
+
 def check_bound(obj_domain: pg.Rect):
     """"
     引数：こうかとんRectか、ばくだんRect
@@ -32,8 +48,15 @@ def main():
     bg_img = pg.image.load("ex02/fig/pg_bg.jpg")
     
     """"こうかとん"""
-    kk_img = pg.image.load("ex02/fig/3.png")
-    kk_img = pg.transform.rotozoom(kk_img, 0, 2.0)
+
+    kk_dir_dic = kk_direction()
+    kk_img = kk_dir_dic[(0, 0)] # 初期画像
+    # kk_img = 
+    
+    
+    # kk_direct_lst = [kk_img, kk_trans_img] 
+    
+    
     kk_domain = kk_img.get_rect()
     kk_domain.center = (900, 400)
     
@@ -48,6 +71,8 @@ def main():
     vx, vy = +5, +5 # 爆弾の速度
     
     
+    
+    
     clock = pg.time.Clock()
     tmr = 0
     while True:
@@ -55,30 +80,42 @@ def main():
             if event.type == pg.QUIT: 
                 return
             
+            
         if kk_domain.colliderect(bomb_domain):
             print("ゲームオーバー")
             return
     
         screen.blit(bg_img, [0, 0])
-        # screen.blit(kk_img, [900, 400])
-        
-        # screen.blit(bomb_circle, [100, 100])
+
+
         """"こうかとん"""
         key_lst = pg.key.get_pressed()
         sum_move = [0, 0]
         
         # こうかとんをキーボード操作
+        # kk_direct_flag = 0
         for key, move_tpl in move_key_dic.items():
             if key_lst[key]:
                 sum_move[0] += move_tpl[0] # 横方向の合計移動量
                 sum_move[1] += move_tpl[1] # 縦方向の合計移動量
-        kk_domain.move_ip(sum_move[0], sum_move[1]) # 移動させる
+        kk_img = kk_dir_dic[tuple(sum_move)]
+        
+                
+            # # 右だったらフラグ変数を1に、左なら0
+            # if key_lst[key] == pg.K_RIGHT:
+            #     kk_direct_flag = 1
+            # elif key_lst[key] == pg.K_LEFT:
+            #     kk_direct_flag = 0
+                
+        kk_domain.move_ip(sum_move[0], sum_move[1]) # 移動
         
         # はみだしを判定
         if check_bound(kk_domain) != (True, True):
             kk_domain.move_ip(-sum_move[0], -sum_move[1])
             
         # 移動後の座標に表示
+        
+        # screen.blit(kk_direct_lst[kk_direct_flag], kk_domain)
         screen.blit(kk_img, kk_domain)
         
         """"ばくだん"""
@@ -94,7 +131,7 @@ def main():
         
         pg.display.update()
         tmr += 1
-        clock.tick(10)
+        clock.tick(100)
 
 
 if __name__ == "__main__":
