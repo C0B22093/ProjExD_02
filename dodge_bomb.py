@@ -12,6 +12,19 @@ move_key_dic = {
                 pg.K_RIGHT: (+5, 0),
 }
 
+def check_bound(obj_domain: pg.Rect):
+    """"
+    引数：こうかとんRectか、ばくだんRect
+    戻値：タプル（横方向判定結果、縦方向判定結果）
+    画面内ならTrue, 画面外ならFalse
+    """
+    yoko, tate = True, True
+    if (obj_domain.left < 0) or (WIDTH < obj_domain.right): # 横方向判定
+        yoko = False
+    if (obj_domain.top < 0) or (HEIGHT < obj_domain.bottom): # 縦方向判定
+        tate = False
+    return yoko, tate
+
 
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
@@ -49,20 +62,35 @@ def main():
         """"こうかとん"""
         key_lst = pg.key.get_pressed()
         sum_move = [0, 0]
+        
+        # こうかとんをキーボード操作
         for key, move_tpl in move_key_dic.items():
             if key_lst[key]:
                 sum_move[0] += move_tpl[0] # 横方向の合計移動量
                 sum_move[1] += move_tpl[1] # 縦方向の合計移動量
         kk_domain.move_ip(sum_move[0], sum_move[1]) # 移動させる
-        screen.blit(kk_img, kk_domain) # 移動後の座標に表示させる
+        
+        # はみだしを判定
+        if check_bound(kk_domain) != (True, True):
+            kk_domain.move_ip(-sum_move[0], -sum_move[1])
+            
+        # 移動後の座標に表示
+        screen.blit(kk_img, kk_domain)
         
         """"ばくだん"""
         bomb_domain.move_ip(vx, vy) # 爆弾の移動
+        
+        # はみだしを判定する.はみ出したら方向転換
+        yoko, tate = check_bound(bomb_domain)
+        if not yoko:
+            vx *= -1
+        if not tate:
+            vy *= -1
         screen.blit(bomb_circle, bomb_domain) # rectを使って試しにblit
         
         pg.display.update()
         tmr += 1
-        clock.tick(10)
+        clock.tick(100)
 
 
 if __name__ == "__main__":
