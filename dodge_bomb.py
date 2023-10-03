@@ -54,6 +54,10 @@ def main():
         for event in pg.event.get():
             if event.type == pg.QUIT: 
                 return
+            
+        if kk_domain.colliderect(bomb_domain):
+            print("ゲームオーバー")
+            return
     
         screen.blit(bg_img, [0, 0])
         # screen.blit(kk_img, [900, 400])
@@ -90,7 +94,7 @@ def main():
         
         pg.display.update()
         tmr += 1
-        clock.tick(100)
+        clock.tick(10)
 
 
 if __name__ == "__main__":
