@@ -5,6 +5,9 @@ import random
 
 WIDTH, HEIGHT = 1600, 900
 
+# 加速度のリスト
+accs = [a for a in range(1, 11)]
+
 move_key_dic = {
                 pg.K_UP: (0, -5),
                 pg.K_DOWN: (0, +5),
@@ -51,10 +54,6 @@ def main():
 
     kk_dir_dic = kk_direction()
     kk_img = kk_dir_dic[(0, 0)] # 初期画像
-    # kk_img = 
-    
-    
-    # kk_direct_lst = [kk_img, kk_trans_img] 
     
     
     kk_domain = kk_img.get_rect()
@@ -93,19 +92,11 @@ def main():
         sum_move = [0, 0]
         
         # こうかとんをキーボード操作
-        # kk_direct_flag = 0
         for key, move_tpl in move_key_dic.items():
             if key_lst[key]:
                 sum_move[0] += move_tpl[0] # 横方向の合計移動量
                 sum_move[1] += move_tpl[1] # 縦方向の合計移動量
         kk_img = kk_dir_dic[tuple(sum_move)]
-        
-                
-            # # 右だったらフラグ変数を1に、左なら0
-            # if key_lst[key] == pg.K_RIGHT:
-            #     kk_direct_flag = 1
-            # elif key_lst[key] == pg.K_LEFT:
-            #     kk_direct_flag = 0
                 
         kk_domain.move_ip(sum_move[0], sum_move[1]) # 移動
         
@@ -114,12 +105,10 @@ def main():
             kk_domain.move_ip(-sum_move[0], -sum_move[1])
             
         # 移動後の座標に表示
-        
-        # screen.blit(kk_direct_lst[kk_direct_flag], kk_domain)
         screen.blit(kk_img, kk_domain)
         
         """"ばくだん"""
-        bomb_domain.move_ip(vx, vy) # 爆弾の移動
+        bomb_domain.move_ip(vx*accs[min(tmr//500, 9)], vy*accs[min(tmr//500, 9)]) # 爆弾の移動.時間ともに加速
         
         # はみだしを判定する.はみ出したら方向転換
         yoko, tate = check_bound(bomb_domain)
